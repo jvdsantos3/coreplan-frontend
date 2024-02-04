@@ -10,6 +10,7 @@ import {
   storeTokens,
   storeUser,
 } from '../utils/sessionMethods'
+import { toast } from 'react-toastify'
 
 interface AuthContextType {
   user: IUser | null
@@ -46,7 +47,7 @@ export function AuthProvider() {
         navigate('/home')
       })
       .catch((error) => {
-        console.log(error)
+        toast.error(error.response.data.error)
         setLoading(false)
       })
   }
@@ -75,7 +76,14 @@ export function AuthProvider() {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLogged, loading, login, register, logout }}
+      value={{
+        user,
+        isLogged,
+        loading,
+        login,
+        register,
+        logout,
+      }}
     >
       <Outlet />
     </AuthContext.Provider>
