@@ -24,6 +24,7 @@ export const Header = () => {
 
   const { cartLength } = useProduct()
   const { user, logout } = useAuth()
+  console.log('teste', cartLength)
 
   const navigate = useNavigate()
 

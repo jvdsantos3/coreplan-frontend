@@ -62,8 +62,8 @@ export const Router = () => {
         <Route path="/register" element={<Register />} />
 
         <Route path="/" element={<Private />}>
-          <Route path="/" element={<DefaultLayout />}>
-            <Route path="/" element={<ProductProvider />}>
+          <Route path="/" element={<ProductProvider />}>
+            <Route path="/" element={<DefaultLayout />}>
               <Route path="/" element={<NormalUser />}>
                 <Route path="/home" element={<Home />} />
                 <Route path="/carrinho" element={<Cart />} />
