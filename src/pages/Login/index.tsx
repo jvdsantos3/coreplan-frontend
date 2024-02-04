@@ -13,6 +13,7 @@ export const Login = () => {
     <UserForm
       title="Login"
       buttonText="Entrar"
+      buttonTextLoading="Entrando..."
       linkText="Ainda não tem uma conta? Cadastre-se"
       linkPath="/register"
       handleEvent={handleLogin}

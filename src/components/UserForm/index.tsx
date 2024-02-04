@@ -27,6 +27,7 @@ import { useAuth } from '../../hooks/useAuth'
 interface LoginProps {
   title: string
   buttonText: string
+  buttonTextLoading: string
   linkText: string
   linkPath: string
   handleEvent: (data: LoginInput) => Promise<void>
@@ -42,6 +43,7 @@ export type FormInputs = z.infer<typeof formSchema>
 export const UserForm = ({
   title,
   buttonText,
+  buttonTextLoading,
   linkText,
   linkPath,
   handleEvent,
@@ -130,9 +132,10 @@ export const UserForm = ({
               type="submit"
               fullWidth
               variant="contained"
+              disabled
               sx={{ mt: 3, mb: 2 }}
             >
-              {buttonText}
+              {buttonTextLoading}
             </Button>
           ) : (
             <Button

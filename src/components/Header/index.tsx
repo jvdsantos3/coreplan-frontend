@@ -23,7 +23,7 @@ export const Header = () => {
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
 
   const { cartLength } = useProduct()
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
 
   const navigate = useNavigate()
 
@@ -58,7 +58,7 @@ export const Header = () => {
             variant="h6"
             noWrap
             component={NavLink}
-            to="/home"
+            to={Number(user?.role) === 1 ? '/admin' : '/home'}
             sx={{
               mr: 2,
               display: { xs: 'none', md: 'flex' },
@@ -101,9 +101,15 @@ export const Header = () => {
               }}
             >
               <MenuItem onClick={handleCloseNavMenu}>
-                <Typography textAlign="center">Produtos</Typography>
+                <Typography
+                  component={NavLink}
+                  to={Number(user?.role) === 1 ? '/admin' : '/home'}
+                  textAlign="center"
+                >
+                  Produtos
+                </Typography>
               </MenuItem>
-              {user.role === 1 && (
+              {Number(user?.role) === 1 && (
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">Ofertas</Typography>
                 </MenuItem>
@@ -115,7 +121,7 @@ export const Header = () => {
             variant="h5"
             noWrap
             component={NavLink}
-            to="/home"
+            to={Number(user?.role) === 1 ? '/admin' : '/home'}
             sx={{
               mr: 2,
               display: { xs: 'flex', md: 'none' },
@@ -132,13 +138,13 @@ export const Header = () => {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Button
               component={NavLink}
-              to="/home"
+              to={Number(user?.role) === 1 ? '/admin' : '/home'}
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
               Produtos
             </Button>
-            {user.role === 1 && (
+            {Number(user?.role) === 1 && (
               <Button
                 component={NavLink}
                 to="/home"
@@ -157,7 +163,7 @@ export const Header = () => {
               gap: 4,
             }}
           >
-            {user.role !== 1 && (
+            {Number(user?.role) !== 1 && (
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Carrinho">
                   <IconButton
@@ -202,12 +208,12 @@ export const Header = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {user.role !== 1 && (
+                {Number(user?.role) !== 1 && (
                   <MenuItem onClick={() => navigate('/pedidos')}>
                     Meus pedidos
                   </MenuItem>
                 )}
-                <MenuItem onClick={handleCloseUserMenu}>Sair</MenuItem>
+                <MenuItem onClick={logout}>Sair</MenuItem>
               </Menu>
             </Box>
           </Box>
