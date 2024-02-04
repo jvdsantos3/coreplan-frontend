@@ -16,12 +16,14 @@ import {
 import { Badge, Button } from '@mui/material'
 import { useProduct } from '../../hooks/useProducts'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
 
 export const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
 
   const { cartLength } = useProduct()
+  const { user } = useAuth()
 
   const navigate = useNavigate()
 
@@ -101,6 +103,11 @@ export const Header = () => {
               <MenuItem onClick={handleCloseNavMenu}>
                 <Typography textAlign="center">Produtos</Typography>
               </MenuItem>
+              {user.role === 1 && (
+                <MenuItem onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">Ofertas</Typography>
+                </MenuItem>
+              )}
             </Menu>
           </Box>
 
@@ -131,6 +138,16 @@ export const Header = () => {
             >
               Produtos
             </Button>
+            {user.role === 1 && (
+              <Button
+                component={NavLink}
+                to="/home"
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                Ofertas
+              </Button>
+            )}
           </Box>
 
           <Box
@@ -140,21 +157,23 @@ export const Header = () => {
               gap: 4,
             }}
           >
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Carrinho">
-                <IconButton
-                  component={NavLink}
-                  to="/carrinho"
-                  size="large"
-                  color="inherit"
-                  sx={{ p: 0 }}
-                >
-                  <Badge badgeContent={cartLength} color="secondary">
-                    <ShoppingCart />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-            </Box>
+            {user.role !== 1 && (
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title="Carrinho">
+                  <IconButton
+                    component={NavLink}
+                    to="/carrinho"
+                    size="large"
+                    color="inherit"
+                    sx={{ p: 0 }}
+                  >
+                    <Badge badgeContent={cartLength} color="secondary">
+                      <ShoppingCart />
+                    </Badge>
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            )}
 
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Abrir opções de perfil">
@@ -183,9 +202,11 @@ export const Header = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <MenuItem onClick={() => navigate('/pedidos')}>
-                  Meus pedidos
-                </MenuItem>
+                {user.role !== 1 && (
+                  <MenuItem onClick={() => navigate('/pedidos')}>
+                    Meus pedidos
+                  </MenuItem>
+                )}
                 <MenuItem onClick={handleCloseUserMenu}>Sair</MenuItem>
               </Menu>
             </Box>

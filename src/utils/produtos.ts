@@ -9,7 +9,7 @@ export const getProducts = () => {
       i % 2 === 0
         ? {
             name: 'Oferta 1',
-            discount_percent: 2,
+            discount_percent: 20,
             value_with_dicount: 8000,
           }
         : null
@@ -18,7 +18,7 @@ export const getProducts = () => {
       id: i,
       price: 10000,
       name: `Produto ${i}`,
-      description: `Descrição do produto ${i}`,
+      description: `Descrição do produto ${i} Descrição do produto ${i} Descrição do produto ${i} Descrição do produto ${i}`,
       offer,
     })
   }

@@ -21,16 +21,19 @@ import { NavLink } from 'react-router-dom'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { LoginInput } from '../../interfaces/IUserInput'
+import { useAuth } from '../../hooks/useAuth'
 
 interface LoginProps {
   title: string
   buttonText: string
   linkText: string
   linkPath: string
+  handleEvent: (data: LoginInput) => Promise<void>
 }
 
 const formSchema = z.object({
-  user: z.string().min(1, 'O campo Usuário é obrigatório.'),
+  username: z.string().min(1, 'O campo Usuário é obrigatório.'),
   password: z.string().min(1, 'O campo Senha é obrigatório.'),
 })
 
@@ -41,8 +44,11 @@ export const UserForm = ({
   buttonText,
   linkText,
   linkPath,
+  handleEvent,
 }: LoginProps) => {
   const [showPassword, setShowPassword] = useState(false)
+
+  const { loading } = useAuth()
 
   const {
     register,
@@ -55,13 +61,6 @@ export const UserForm = ({
   const handleClickShowPassword = () => setShowPassword((show) => !show)
 
   const handleMouseDownPassword = () => {}
-
-  const handleEvent = (data: FormInputs) => {
-    console.log({
-      email: data.user,
-      password: data.password,
-    })
-  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -94,9 +93,9 @@ export const UserForm = ({
             id="user"
             label="Usuário"
             autoFocus
-            error={!!errors.user}
-            helperText={errors.user ? errors.user.message : null}
-            {...register('user')}
+            error={!!errors.username}
+            helperText={errors.username ? errors.username.message : null}
+            {...register('username')}
           />
           <FormControl
             sx={{ mt: 1 }}
@@ -126,14 +125,25 @@ export const UserForm = ({
             />
             <FormHelperText>{errors.password?.message}</FormHelperText>
           </FormControl>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            {buttonText}
-          </Button>
+          {loading ? (
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {buttonText}
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              {buttonText}
+            </Button>
+          )}
 
           <Link
             component={NavLink}
