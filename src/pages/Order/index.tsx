@@ -5,7 +5,7 @@ import { CartItem } from '../../components/CartItem'
 import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
 
-export const Cart = () => {
+export const Order = () => {
   const { cartItems } = useProduct()
 
   return (

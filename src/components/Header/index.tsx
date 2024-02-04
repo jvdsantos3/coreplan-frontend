@@ -15,13 +15,15 @@ import {
 } from '@mui/icons-material'
 import { Badge, Button } from '@mui/material'
 import { useProduct } from '../../hooks/useProducts'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 export const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null)
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null)
 
   const { cartLength } = useProduct()
+
+  const navigate = useNavigate()
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget)
@@ -181,9 +183,10 @@ export const Header = () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                <MenuItem onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">Sair</Typography>
+                <MenuItem onClick={() => navigate('/pedidos')}>
+                  Meus pedidos
                 </MenuItem>
+                <MenuItem onClick={handleCloseUserMenu}>Sair</MenuItem>
               </Menu>
             </Box>
           </Box>
