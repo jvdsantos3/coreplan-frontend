@@ -16,6 +16,7 @@ interface AuthContextType {
   isLogged: boolean
   loading: boolean
   login: (data: LoginInput) => Promise<void>
+  register: (data: LoginInput) => Promise<void>
   logout: () => void
 }
 
@@ -30,6 +31,7 @@ export function AuthProvider() {
 
   const login = async (data: LoginInput) => {
     setLoading(true)
+
     await api
       .post('/login', data)
       .then((response) => {
@@ -49,6 +51,21 @@ export function AuthProvider() {
       })
   }
 
+  const register = async (data: LoginInput) => {
+    setLoading(true)
+
+    await api
+      .post('/users', data)
+      .then(() => {
+        navigate('/')
+        setLoading(false)
+      })
+      .catch((error) => {
+        console.log(error)
+        setLoading(false)
+      })
+  }
+
   const logout = () => {
     removeTokens()
     setIsLogged(false)
@@ -57,7 +74,9 @@ export function AuthProvider() {
   }
 
   return (
-    <AuthContext.Provider value={{ user, isLogged, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ user, isLogged, loading, login, register, logout }}
+    >
       <Outlet />
     </AuthContext.Provider>
   )

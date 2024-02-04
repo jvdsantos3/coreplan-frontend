@@ -81,7 +81,6 @@ export function ProductProvider() {
   ])
 
   const cartLength = cartItems.length
-  console.log(cartLength)
 
   const addToCart = (product: IProduct, quantity: number) => {
     setCartItems((state) => {

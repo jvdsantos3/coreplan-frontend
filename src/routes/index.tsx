@@ -37,8 +37,6 @@ const NormalUser = () => {
     if (Number(user?.role) === 1) {
       return navigate('/admin/produtos', { replace: true })
     }
-
-    navigate('/home', { replace: true })
   }, [navigate, user])
 
   return <Outlet />

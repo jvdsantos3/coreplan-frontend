@@ -3,6 +3,7 @@ import { useProduct } from '../../hooks/useProducts'
 import { CartItem } from '../../components/CartItem'
 import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
+import { formatCurrency } from '../../utils/currency'
 
 export const Cart = () => {
   const { cartItems } = useProduct()
@@ -67,6 +68,15 @@ export const Cart = () => {
                 <Fragment key={item.id}>
                   <CartItem item={item} />
                 </Fragment>
+              ))}
+            </Box>
+
+            <Box>
+              <Typography variant="h6">Resumo do Pedido</Typography>
+              {cartItems.map((item, index) => (
+                <Box
+                  key={item.id}
+                >{`Item ${index + 1}: ${item.name} - Total: ${formatCurrency((item.offers?.value_with_discount ?? item.price) * item.quantity)}`}</Box>
               ))}
             </Box>
 
