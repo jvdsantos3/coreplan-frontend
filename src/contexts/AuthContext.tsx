@@ -22,7 +22,7 @@ export function AuthProvider() {
   const [user, setUser] = useState({
     user: 'Vins',
     password: '12345678',
-    role: 1,
+    role: 2,
   })
 
   const login = async (data: LoginInput) => {

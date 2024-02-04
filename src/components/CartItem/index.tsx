@@ -44,7 +44,7 @@ export const CartItem = ({ item }: CartItemProps) => {
           {item.name}
         </Typography>
 
-        {item.offer === null ? (
+        {item.offers === null ? (
           <Typography
             variant="body1"
             color="success.light"
@@ -65,7 +65,7 @@ export const CartItem = ({ item }: CartItemProps) => {
                 fontWeight: 'bold',
               }}
             >
-              {item.offer && formatCurrency(item.offer.value_with_dicount)}
+              {item.offers && formatCurrency(item.offers.value_with_discount)}
             </Typography>
             <Box
               sx={{
@@ -91,7 +91,7 @@ export const CartItem = ({ item }: CartItemProps) => {
                   fontSize: 12,
                 }}
               >
-                {item.offer && item.offer.discount_percent}% OFF
+                {item.offers && item.offers.discount_percent}% OFF
               </Typography>
             </Box>
           </Box>
