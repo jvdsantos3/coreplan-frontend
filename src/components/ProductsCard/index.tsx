@@ -16,7 +16,7 @@ import { useProduct } from '../../hooks/useProducts'
 export const ProductCard = (product: IProduct) => {
   const [count, setCount] = useState(1)
 
-  const { name, description, price, offer } = product
+  const { name, description, price, offers } = product
 
   const { addToCart } = useProduct()
 
@@ -42,7 +42,7 @@ export const ProductCard = (product: IProduct) => {
             gap: 2,
           }}
         >
-          {offer === null ? (
+          {offers === null ? (
             <Typography
               variant="body1"
               color="success.light"
@@ -63,7 +63,7 @@ export const ProductCard = (product: IProduct) => {
                   fontWeight: 'bold',
                 }}
               >
-                {offer && formatCurrency(offer.value_with_dicount)}
+                {offers && formatCurrency(offers.value_with_discount)}
               </Typography>
               <Typography
                 variant="body2"

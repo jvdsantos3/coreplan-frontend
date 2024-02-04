@@ -45,7 +45,7 @@ export const Home = () => {
                   name={product.name}
                   description={product.description}
                   price={product.price}
-                  offer={product.offer}
+                  offers={product.offers}
                 />
               </Grid>
             ))}

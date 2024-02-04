@@ -5,5 +5,5 @@ export interface IProduct {
   price: number
   name: string
   description: string
-  offer: null | IOffer
+  offers: null | IOffer
 }

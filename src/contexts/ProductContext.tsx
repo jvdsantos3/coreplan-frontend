@@ -1,8 +1,8 @@
 import { createContext, useEffect, useState } from 'react'
 import { IProduct } from '../interfaces/IProduct'
-import { getProducts } from '../utils/produtos'
 import { Outlet } from 'react-router-dom'
 import { ICartItem } from '../interfaces/ICartItem'
+import { api } from '../libs/axios'
 
 interface ProductContextType {
   products: IProduct[]
@@ -24,10 +24,10 @@ export function ProductProvider() {
       price: 10000,
       name: 'Produto 30',
       description: 'Descrição do produto 30',
-      offer: {
+      offers: {
         name: 'Desconto produto 30',
         discount_percent: 20,
-        value_with_dicount: 8000,
+        value_with_discount: 8000,
       },
     },
     {
@@ -36,7 +36,7 @@ export function ProductProvider() {
       price: 10000,
       name: 'Produto 31',
       description: 'Descrição do produto 31',
-      offer: null,
+      offers: null,
     },
     {
       id: 32,
@@ -44,7 +44,7 @@ export function ProductProvider() {
       price: 10000,
       name: 'Produto 32',
       description: 'Descrição do produto 32',
-      offer: null,
+      offers: null,
     },
     {
       id: 33,
@@ -52,7 +52,7 @@ export function ProductProvider() {
       price: 10000,
       name: 'Produto 33',
       description: 'Descrição do produto 33',
-      offer: null,
+      offers: null,
     },
     {
       id: 34,
@@ -60,7 +60,7 @@ export function ProductProvider() {
       price: 10000,
       name: 'Produto 34',
       description: 'Descrição do produto 34',
-      offer: null,
+      offers: null,
     },
     {
       id: 35,
@@ -68,7 +68,7 @@ export function ProductProvider() {
       price: 10000,
       name: 'Produto 35',
       description: 'Descrição do produto 35',
-      offer: null,
+      offers: null,
     },
     {
       id: 36,
@@ -76,7 +76,7 @@ export function ProductProvider() {
       price: 10000,
       name: 'Produto 36',
       description: 'Descrição do produto 36',
-      offer: null,
+      offers: null,
     },
   ])
 
@@ -112,8 +112,14 @@ export function ProductProvider() {
     })
   }
 
+  const getProducts = async () => {
+    await api
+      .get('/products')
+      .then((response) => setProducts(response.data.data))
+  }
+
   useEffect(() => {
-    setProducts(getProducts())
+    getProducts()
   }, [])
 
   return (
