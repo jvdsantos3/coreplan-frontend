@@ -47,8 +47,7 @@ export function AuthProvider() {
         navigate('/home')
       })
       .catch((error) => {
-        console.log(error)
-        toast.error('Teste')
+        toast.error(error.response.data.error)
         setLoading(false)
       })
   }
@@ -77,7 +76,14 @@ export function AuthProvider() {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLogged, loading, login, register, logout }}
+      value={{
+        user,
+        isLogged,
+        loading,
+        login,
+        register,
+        logout,
+      }}
     >
       <Outlet />
     </AuthContext.Provider>
