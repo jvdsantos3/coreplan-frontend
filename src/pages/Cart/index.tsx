@@ -6,7 +6,7 @@ import { NavLink } from 'react-router-dom'
 import { formatCurrency } from '../../utils/currency'
 
 export const Cart = () => {
-  const { cartItems } = useProduct()
+  const { cartItems, totalCartValue, finalizeOrder } = useProduct()
 
   return (
     <Container
@@ -71,16 +71,22 @@ export const Cart = () => {
               ))}
             </Box>
 
-            <Box>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1,
+              }}
+            >
               <Typography variant="h6">Resumo do Pedido</Typography>
-              {cartItems.map((item, index) => (
-                <Box
-                  key={item.id}
-                >{`Item ${index + 1}: ${item.name} - Total: ${formatCurrency((item.offers?.value_with_discount ?? item.price) * item.quantity)}`}</Box>
-              ))}
+              <Typography variant="body1" color="primary.dark">
+                Total: {formatCurrency(totalCartValue)}
+              </Typography>
             </Box>
 
-            <Button variant="contained">Finalizar Pedido</Button>
+            <Button variant="contained" onClick={finalizeOrder}>
+              Finalizar Pedido
+            </Button>
           </>
         ) : (
           <Box

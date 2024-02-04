@@ -8,6 +8,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Router } from './routes'
 import { ThemeProvider } from '@mui/material'
 import { GlobalStyle } from './styles/Global'
+import { ToastContainer } from 'react-toastify'
 
 export function App() {
   return (
@@ -17,6 +18,8 @@ export function App() {
       <BrowserRouter>
         <Router />
       </BrowserRouter>
+
+      <ToastContainer />
     </ThemeProvider>
   )
 }
