@@ -67,7 +67,7 @@ export type FormInputs = z.infer<typeof formSchema>
 export const ProductsTable = () => {
   const [open, setOpen] = useState(false)
 
-  const { products, addProduct } = useProduct()
+  const { products, addProduct, deleteProduct } = useProduct()
 
   const {
     register,
@@ -305,11 +305,12 @@ export const ProductsTable = () => {
                     maxWidth: 4,
                   }}
                 >
-                  <IconButton aria-label="delete">
+                  <IconButton aria-label="edit">
                     <Edit />
                   </IconButton>
                   <IconButton
                     aria-label="delete"
+                    onClick={() => deleteProduct(row)}
                     sx={{
                       color: ({ palette }) => palette.error.main,
                     }}

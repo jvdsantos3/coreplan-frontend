@@ -131,7 +131,6 @@ export function ProductProvider() {
   }
 
   const deleteProduct = async (product: IProduct) => {
-    console.log(product)
     await api
       .delete(`/products/${product.id}`)
       .then(async () => {
