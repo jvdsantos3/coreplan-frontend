@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  node:
+    container_name: front_loja_coreplan
+    image: node:20
+    ports:
+      - '1008:3000'
+    volumes:
+      - ./:/srv/app
+    working_dir: /srv/app
+    command: >
+      bash -c "npm install && npm run dev"
