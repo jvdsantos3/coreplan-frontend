@@ -1,4 +1,6 @@
 import {
+  Box,
+  Button,
   Container,
   IconButton,
   Paper,
@@ -8,13 +10,22 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Typography,
   styled,
   tableCellClasses,
 } from '@mui/material'
 import { useProduct } from '../../../hooks/useProducts'
-import { Delete, Edit } from '@mui/icons-material'
+import { AddCircleOutline, Delete, Edit, Close } from '@mui/icons-material'
 import { formatCurrency } from '../../../utils/currency'
+import Dialog from '@mui/material/Dialog'
+import DialogTitle from '@mui/material/DialogTitle'
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import { useState } from 'react'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -36,8 +47,47 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }))
 
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+}))
+
+const formSchema = z.object({
+  name: z.string().min(1, 'O campo Usuário é obrigatório.'),
+  description: z.string().min(1, 'O campo Senha é obrigatório.'),
+  price: z.coerce.number(),
+})
+
+export type FormInputs = z.infer<typeof formSchema>
+
 export const ProductsTable = () => {
-  const { products } = useProduct()
+  const [open, setOpen] = useState(false)
+
+  const { products, addProduct } = useProduct()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormInputs>({
+    resolver: zodResolver(formSchema),
+  })
+
+  const handleAddProduct = (data: FormInputs) => {
+    addProduct(data)
+    handleClose()
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true)
+  }
+  const handleClose = () => {
+    setOpen(false)
+  }
 
   return (
     <Container
@@ -61,6 +111,96 @@ export const ProductsTable = () => {
       >
         Produtos
       </Typography>
+
+      <Button
+        startIcon={<AddCircleOutline />}
+        variant="contained"
+        onClick={handleClickOpen}
+      >
+        Adicionar Produto
+      </Button>
+
+      <BootstrapDialog
+        onClose={handleClose}
+        aria-labelledby="customized-dialog-title"
+        open={open}
+      >
+        <Box
+          component="form"
+          onSubmit={handleSubmit(handleAddProduct)}
+          sx={{
+            width: 600,
+          }}
+        >
+          <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+            Adicionar Produto
+          </DialogTitle>
+          <IconButton
+            aria-label="close"
+            onClick={handleClose}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <Close />
+          </IconButton>
+          <DialogContent dividers>
+            <TextField
+              margin="normal"
+              fullWidth
+              required
+              id="name"
+              label="Nome"
+              autoFocus
+              error={!!errors.name}
+              helperText={errors.name ? errors.name.message : null}
+              {...register('name')}
+            />
+            <TextField
+              margin="normal"
+              fullWidth
+              required
+              id="description"
+              label="Descrição"
+              autoFocus
+              error={!!errors.description}
+              helperText={
+                errors.description ? errors.description.message : null
+              }
+              {...register('description')}
+            />
+            <TextField
+              margin="normal"
+              fullWidth
+              required
+              id="price"
+              label="Preço"
+              autoFocus
+              type="number"
+              error={!!errors.price}
+              helperText={errors.price ? errors.price.message : null}
+              {...register('price')}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button
+              autoFocus
+              onClick={handleClose}
+              sx={{
+                color: ({ palette }) => palette.error.main,
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button variant="contained" type="submit">
+              Adicionar
+            </Button>
+          </DialogActions>
+        </Box>
+      </BootstrapDialog>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -149,17 +289,15 @@ export const ProductsTable = () => {
                     maxWidth: '2rem',
                   }}
                 >
-                  {row.offer?.discount_percent
-                    ? `${row.offer.discount_percent}%`
-                    : '-'}
+                  {row.offers ? `${row.offers.discount_percent}%` : '-'}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
                     maxWidth: '2rem',
                   }}
                 >
-                  {row.offer?.value_with_dicount
-                    ? formatCurrency(row.offer.value_with_dicount)
+                  {row.offers
+                    ? formatCurrency(row.offers.value_with_discount)
                     : '-'}
                 </StyledTableCell>
                 <StyledTableCell

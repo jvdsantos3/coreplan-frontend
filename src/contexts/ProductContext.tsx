@@ -1,88 +1,40 @@
 import { createContext, useEffect, useState } from 'react'
 import { IProduct } from '../interfaces/IProduct'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { ICartItem } from '../interfaces/ICartItem'
 import { api } from '../libs/axios'
+import { toast } from 'react-toastify'
+import { IOrder } from '../interfaces/IOrder'
+
+interface ProductInputs {
+  name: string
+  description: string
+  price: number
+}
 
 interface ProductContextType {
   products: IProduct[]
   cartItems: ICartItem[]
+  orders: IOrder[]
   cartLength: number
   totalCartValue: number
   addToCart: (product: IProduct, quantity: number) => void
   removeFromCart: (itemId: number) => void
   changeCartItemQuantity: (itemId: number, quantity: number) => void
   finalizeOrder: () => void
+  addProduct: (data: ProductInputs) => void
 }
 
 export const ProductContext = createContext({} as ProductContextType)
 
 export function ProductProvider() {
   const [products, setProducts] = useState<IProduct[]>([])
-  const [cartItems, setCartItems] = useState<ICartItem[]>([
-    // {
-    //   id: 30,
-    //   quantity: 1,
-    //   price: 10000,
-    //   name: 'Produto 30',
-    //   description: 'Descrição do produto 30',
-    //   offers: {
-    //     name: 'Desconto produto 30',
-    //     discount_percent: 20,
-    //     value_with_discount: 8000,
-    //   },
-    // },
-    // {
-    //   id: 31,
-    //   quantity: 1,
-    //   price: 10000,
-    //   name: 'Produto 31',
-    //   description: 'Descrição do produto 31',
-    //   offers: null,
-    // },
-    // {
-    //   id: 32,
-    //   quantity: 1,
-    //   price: 10000,
-    //   name: 'Produto 32',
-    //   description: 'Descrição do produto 32',
-    //   offers: null,
-    // },
-    // {
-    //   id: 33,
-    //   quantity: 1,
-    //   price: 10000,
-    //   name: 'Produto 33',
-    //   description: 'Descrição do produto 33',
-    //   offers: null,
-    // },
-    // {
-    //   id: 34,
-    //   quantity: 1,
-    //   price: 10000,
-    //   name: 'Produto 34',
-    //   description: 'Descrição do produto 34',
-    //   offers: null,
-    // },
-    // {
-    //   id: 35,
-    //   quantity: 1,
-    //   price: 10000,
-    //   name: 'Produto 35',
-    //   description: 'Descrição do produto 35',
-    //   offers: null,
-    // },
-    // {
-    //   id: 36,
-    //   quantity: 1,
-    //   price: 10000,
-    //   name: 'Produto 36',
-    //   description: 'Descrição do produto 36',
-    //   offers: null,
-    // },
-  ])
+  const [cartItems, setCartItems] = useState<ICartItem[]>([])
+  const [orders, setOrders] = useState<IOrder[]>([])
   const [cartLength, setCartLength] = useState(0)
   const [totalCartValue, setTotalCartValue] = useState(0)
+
+  const navigate = useNavigate()
 
   function calculateTotal(items: ICartItem[]): number {
     let total = 0
@@ -141,7 +93,16 @@ export function ProductProvider() {
 
     await api
       .post('/orders', { order_items: orderItems })
-      .then((response) => console.log(response))
+      .then(async () => {
+        navigate('/home')
+
+        setCartItems([])
+        setCartLength(0)
+        setTotalCartValue(0)
+        await getOrders()
+
+        toast.success('Pedido finalizado com sucesso.')
+      })
       .catch((error) => console.log(error))
   }
 
@@ -151,8 +112,26 @@ export function ProductProvider() {
       .then((response) => setProducts(response.data.data))
   }
 
+  const addProduct = async (data: ProductInputs) => {
+    await api.post('/products', data).then(() => {
+      getProducts()
+      toast.success('Produto cadastrado com sucesso.')
+    })
+  }
+
+  const getOrders = async () => {
+    await api
+      .get('/resume/orders/user')
+      .then((response) => {
+        const data = response.data.data
+        setOrders(data)
+      })
+      .catch((error) => console.log(error))
+  }
+
   useEffect(() => {
     getProducts()
+    getOrders()
   }, [])
 
   useEffect(() => {
@@ -165,12 +144,14 @@ export function ProductProvider() {
       value={{
         products,
         cartItems,
+        orders,
         cartLength,
         totalCartValue,
         addToCart,
         removeFromCart,
         changeCartItemQuantity,
         finalizeOrder,
+        addProduct,
       }}
     >
       <Outlet />

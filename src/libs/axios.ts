@@ -25,7 +25,6 @@ api.interceptors.request.use(
 const ignoredRoutes = ['/login', '/users']
 
 async function error401handling(error: AxiosResponse) {
-  console.log('Aq')
   return Promise.reject(error)
 }
 

@@ -1,6 +1,6 @@
 import { Box, Button, Container, Typography } from '@mui/material'
 import { useProduct } from '../../hooks/useProducts'
-import { CartItem } from '../../components/CartItem'
+import { CartItem } from '../../components/ProductItem'
 import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
 import { formatCurrency } from '../../utils/currency'

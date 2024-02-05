@@ -1,10 +1,17 @@
-import { Routes, Route, useNavigate, Outlet, Navigate } from 'react-router-dom'
+import {
+  Routes,
+  Route,
+  useNavigate,
+  Outlet,
+  Navigate,
+  useLocation,
+} from 'react-router-dom'
 import { Login } from '../pages/Login'
 import { Register } from '../pages/Register'
 import { Home } from '../pages/Home'
 import { ProductProvider } from '../contexts/ProductContext'
 import { Cart } from '../pages/Cart'
-import { Order } from '../pages/Order'
+import { Order } from '../pages/Orders'
 import { DefaultLayout } from '../layouts/DefaultLayout'
 import { AuthProvider } from '../contexts/AuthContext'
 import { ProductsTable } from '../pages/Admin/ProductsTable'
@@ -16,14 +23,19 @@ const Admin = () => {
   const { user } = useAuth()
 
   const navigate = useNavigate()
+  const location = useLocation()
+
+  console.log()
 
   useEffect(() => {
     if (Number(user?.role) === 2) {
       return navigate('/home', { replace: true })
     }
 
-    navigate('/admin/produtos', { replace: true })
-  }, [navigate, user])
+    if (location.pathname === '/admin') {
+      navigate('/admin/produtos', { replace: true })
+    }
+  }, [navigate, user, location])
 
   return <Outlet />
 }

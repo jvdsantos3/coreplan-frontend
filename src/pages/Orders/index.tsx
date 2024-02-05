@@ -1,11 +1,21 @@
-import { Box, Button, Container, Typography } from '@mui/material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Container,
+  Typography,
+} from '@mui/material'
 import { useProduct } from '../../hooks/useProducts'
-import { CartItem } from '../../components/CartItem'
-import { Fragment } from 'react'
 import { NavLink } from 'react-router-dom'
+import { ExpandMore } from '@mui/icons-material'
+import { Fragment } from 'react'
+import moment from 'moment'
+import { formatCurrency } from '../../utils/currency'
 
 export const Order = () => {
-  const { cartItems } = useProduct()
+  const { orders } = useProduct()
 
   return (
     <Container
@@ -38,14 +48,14 @@ export const Order = () => {
             color: 'inherit',
           }}
         >
-          Carinho
+          Pedidos
         </Typography>
 
-        {cartItems.length ? (
+        {orders.length ? (
           <>
             <Box
               sx={{
-                maxHeight: 526,
+                maxHeight: 650,
                 paddingRight: 0.5,
                 display: 'flex',
                 flexDirection: 'column',
@@ -63,14 +73,39 @@ export const Order = () => {
                 },
               }}
             >
-              {cartItems.map((item) => (
-                <Fragment key={item.id}>
-                  <CartItem item={item} />
-                </Fragment>
+              {orders.map((item) => (
+                <Accordion key={item.order.id}>
+                  <AccordionSummary
+                    expandIcon={<ExpandMore />}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                  >
+                    <Fragment>{`Pedido #${item.order.order_id}`}</Fragment>
+                    <Fragment> - </Fragment>
+                    <Fragment>{`${moment(new Date(item.order.created_at)).format('DD/MM/YYYY HH:mm')}`}</Fragment>
+                  </AccordionSummary>
+                  <AccordionDetails>
+                    <Typography variant="h6">Pedidos</Typography>
+                    <Box>
+                      {item.order_items.map((product, index) => (
+                        <Typography
+                          key={index}
+                        >{`- Item: ${product.name} - Preço: ${formatCurrency(product.price_with_discount)} x${product.quantity}`}</Typography>
+                      ))}
+                    </Box>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        marginTop: 1,
+                      }}
+                    >
+                      Total:{' '}
+                      {formatCurrency(item.order.total_value_with_discounts)}
+                    </Typography>
+                  </AccordionDetails>
+                </Accordion>
               ))}
             </Box>
-
-            <Button variant="contained">Finalizar Pedido</Button>
           </>
         ) : (
           <Box
@@ -86,7 +121,7 @@ export const Order = () => {
               variant="body1"
               sx={{ fontSize: 20, fontWeight: 'bold' }}
             >
-              Seu carrinho está vazio.
+              Você ainda não fez nenhum pedido.
             </Typography>
             <Button
               component={NavLink}
