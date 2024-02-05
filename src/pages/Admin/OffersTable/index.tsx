@@ -36,7 +36,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }))
 
 export const OffersTable = () => {
-  const { offers } = useOffer()
+  const { offers, deleteOffer } = useOffer()
 
   return (
     <Container
@@ -153,6 +153,7 @@ export const OffersTable = () => {
                   </IconButton>
                   <IconButton
                     aria-label="delete"
+                    onClick={() => deleteOffer(row)}
                     sx={{
                       color: ({ palette }) => palette.error.main,
                     }}
