@@ -22,7 +22,8 @@ interface ProductContextType {
   removeFromCart: (itemId: number) => void
   changeCartItemQuantity: (itemId: number, quantity: number) => void
   finalizeOrder: () => void
-  addProduct: (data: ProductInputs) => void
+  addProduct: (data: ProductInputs) => Promise<void>
+  editProduct: (idProduct: number, data: ProductInputs) => Promise<void>
 }
 
 export const ProductContext = createContext({} as ProductContextType)
@@ -119,6 +120,14 @@ export function ProductProvider() {
     })
   }
 
+  const editProduct = async (idProduct: number, data: ProductInputs) => {
+    console.log(idProduct, data)
+    await api.put(`/products/${idProduct}`, data).then(() => {
+      getProducts()
+      toast.success('Produto editado com sucesso.')
+    })
+  }
+
   const getOrders = async () => {
     await api
       .get('/resume/orders/user')
@@ -152,6 +161,7 @@ export function ProductProvider() {
         changeCartItemQuantity,
         finalizeOrder,
         addProduct,
+        editProduct,
       }}
     >
       <Outlet />

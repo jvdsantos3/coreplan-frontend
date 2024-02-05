@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Container,
   IconButton,
@@ -10,22 +9,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
   Typography,
   styled,
   tableCellClasses,
 } from '@mui/material'
 import { useProduct } from '../../../hooks/useProducts'
-import { AddCircleOutline, Delete, Edit, Close } from '@mui/icons-material'
+import { AddCircleOutline, Delete, Edit } from '@mui/icons-material'
 import { formatCurrency } from '../../../utils/currency'
-import Dialog from '@mui/material/Dialog'
-import DialogTitle from '@mui/material/DialogTitle'
-import DialogContent from '@mui/material/DialogContent'
-import DialogActions from '@mui/material/DialogActions'
 import { useState } from 'react'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
+import { ProductModalForm } from '../../../components/ProductModalForm'
+import { IProduct } from '../../../interfaces/IProduct'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -47,15 +43,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }))
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  '& .MuiDialogContent-root': {
-    padding: theme.spacing(2),
-  },
-  '& .MuiDialogActions-root': {
-    padding: theme.spacing(1),
-  },
-}))
-
 const formSchema = z.object({
   name: z.string().min(1, 'O campo Usuário é obrigatório.'),
   description: z.string().min(1, 'O campo Senha é obrigatório.'),
@@ -65,28 +52,54 @@ const formSchema = z.object({
 export type FormInputs = z.infer<typeof formSchema>
 
 export const ProductsTable = () => {
-  const [open, setOpen] = useState(false)
+  const [openCreateModal, setOpenCreateModal] = useState(false)
+  const [openEditModal, setOpenEditModal] = useState(false)
+  const [editProductId, setEditProductId] = useState(0)
 
-  const { products, addProduct } = useProduct()
+  const { products, addProduct, editProduct } = useProduct()
 
   const {
     register,
     handleSubmit,
+    setValue,
+    reset,
     formState: { errors },
   } = useForm<FormInputs>({
     resolver: zodResolver(formSchema),
   })
 
-  const handleAddProduct = (data: FormInputs) => {
-    addProduct(data)
-    handleClose()
+  const handleAddProduct = async (data: FormInputs) => {
+    await addProduct(data)
+    handleCloseCreateModal()
   }
 
-  const handleClickOpen = () => {
-    setOpen(true)
+  const handleEditProduct = async (data: FormInputs) => {
+    await editProduct(editProductId, data)
+
+    handleCloseEditModal()
   }
-  const handleClose = () => {
-    setOpen(false)
+
+  const handleClickOpenCreateModal = () => {
+    reset()
+    setOpenCreateModal(true)
+  }
+
+  const handleClickOpenEditModal = async (data: IProduct) => {
+    setValue('name', data.name)
+    setValue('description', data.description)
+    setValue('price', data.price)
+
+    setEditProductId(data.id)
+
+    setOpenEditModal(true)
+  }
+
+  const handleCloseCreateModal = () => {
+    setOpenCreateModal(false)
+  }
+
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false)
   }
 
   return (
@@ -115,92 +128,10 @@ export const ProductsTable = () => {
       <Button
         startIcon={<AddCircleOutline />}
         variant="contained"
-        onClick={handleClickOpen}
+        onClick={handleClickOpenCreateModal}
       >
         Adicionar Produto
       </Button>
-
-      <BootstrapDialog
-        onClose={handleClose}
-        aria-labelledby="customized-dialog-title"
-        open={open}
-      >
-        <Box
-          component="form"
-          onSubmit={handleSubmit(handleAddProduct)}
-          sx={{
-            width: 600,
-          }}
-        >
-          <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
-            Adicionar Produto
-          </DialogTitle>
-          <IconButton
-            aria-label="close"
-            onClick={handleClose}
-            sx={{
-              position: 'absolute',
-              right: 8,
-              top: 8,
-              color: (theme) => theme.palette.grey[500],
-            }}
-          >
-            <Close />
-          </IconButton>
-          <DialogContent dividers>
-            <TextField
-              margin="normal"
-              fullWidth
-              required
-              id="name"
-              label="Nome"
-              autoFocus
-              error={!!errors.name}
-              helperText={errors.name ? errors.name.message : null}
-              {...register('name')}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              required
-              id="description"
-              label="Descrição"
-              autoFocus
-              error={!!errors.description}
-              helperText={
-                errors.description ? errors.description.message : null
-              }
-              {...register('description')}
-            />
-            <TextField
-              margin="normal"
-              fullWidth
-              required
-              id="price"
-              label="Preço"
-              autoFocus
-              type="number"
-              error={!!errors.price}
-              helperText={errors.price ? errors.price.message : null}
-              {...register('price')}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button
-              autoFocus
-              onClick={handleClose}
-              sx={{
-                color: ({ palette }) => palette.error.main,
-              }}
-            >
-              Cancelar
-            </Button>
-            <Button variant="contained" type="submit">
-              Adicionar
-            </Button>
-          </DialogActions>
-        </Box>
-      </BootstrapDialog>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -305,7 +236,10 @@ export const ProductsTable = () => {
                     maxWidth: 4,
                   }}
                 >
-                  <IconButton aria-label="delete">
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleClickOpenEditModal(row)}
+                  >
                     <Edit />
                   </IconButton>
                   <IconButton
@@ -322,6 +256,28 @@ export const ProductsTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <ProductModalForm
+        title="Adicionar Produto"
+        buttonText="Adicionar"
+        open={openCreateModal}
+        handleClose={handleCloseCreateModal}
+        handleEvent={handleAddProduct}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+      />
+
+      <ProductModalForm
+        title="Editar Produto"
+        buttonText="Editar"
+        open={openEditModal}
+        handleClose={handleCloseEditModal}
+        handleEvent={handleEditProduct}
+        handleSubmit={handleSubmit}
+        register={register}
+        errors={errors}
+      />
     </Container>
   )
 }
