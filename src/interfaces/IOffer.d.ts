@@ -1,9 +1,9 @@
 export interface IOffer {
-  id?: number
+  id: number
   name: string
   discount_percent: number
   value_with_discount: number
-  description?: string
+  description: string
   product_name?: string
-  product_id?: number
+  product_id: number
 }

@@ -33,7 +33,6 @@ export function OfferProvider() {
   }
 
   const deleteOffer = async (offer: IOffer) => {
-    console.log(offer)
     await api
       .delete(`/offers/${offer.id}`)
       .then(async () => {
@@ -46,7 +45,6 @@ export function OfferProvider() {
   }
 
   const addOffer = async (data: OfferInputs) => {
-    console.log(data)
     if (data.product_id === 0) {
       delete data.product_id
     }
@@ -62,7 +60,6 @@ export function OfferProvider() {
   }
 
   const editOffer = async (idProduct: number, data: OfferInputs) => {
-    console.log(idProduct, data)
     if (data.product_id === 0) {
       data.product_id = null
     }

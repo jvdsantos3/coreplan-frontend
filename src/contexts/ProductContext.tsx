@@ -122,7 +122,6 @@ export function ProductProvider() {
   }
 
   const editProduct = async (idProduct: number, data: ProductInputs) => {
-    console.log(idProduct, data)
     await api.put(`/products/${idProduct}`, data).then(() => {
       getProducts()
       toast.success('Produto editado com sucesso.')

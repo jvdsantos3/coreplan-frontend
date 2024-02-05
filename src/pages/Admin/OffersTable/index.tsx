@@ -22,7 +22,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { IOffer } from '../../../interfaces/IOffer'
-import { SelectChangeEvent } from '@mui/material/Select'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -48,7 +47,7 @@ const formSchema = z.object({
   name: z.string().min(1, 'O campo Usuário é obrigatório.'),
   description: z.string().min(1, 'O campo Senha é obrigatório.'),
   discount_percent: z.coerce.number(),
-  product_id: z.coerce.number(),
+  product_id: z.number(),
 })
 
 export type FormInputs = z.infer<typeof formSchema>
@@ -57,11 +56,6 @@ export const OffersTable = () => {
   const [openCreateModal, setOpenCreateModal] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
   const [editOfferId, setEditOfferId] = useState(0)
-  const [productId, setProductId] = useState(0)
-
-  const handleChange = (event: SelectChangeEvent) => {
-    setProductId(Number(event.target.value))
-  }
 
   const { offers, addOffer, deleteOffer, editOffer } = useOffer()
   const { products } = useProduct()
@@ -74,6 +68,9 @@ export const OffersTable = () => {
     formState: { errors },
   } = useForm<FormInputs>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      product_id: 0,
+    },
   })
 
   const handleAddOffer = async (data: FormInputs) => {
@@ -96,13 +93,11 @@ export const OffersTable = () => {
     setValue('name', data.name)
     setValue('description', data.description)
     setValue('discount_percent', data.discount_percent)
-
-    const idProductEdit = data.product_id ? data.product_id : 0
-    await setProductId(idProductEdit)
-
-    setEditOfferId(data.id)
+    setValue('product_id', data.product_id)
 
     setOpenEditModal(true)
+
+    setEditOfferId(data.id)
   }
 
   const handleCloseCreateModal = () => {
@@ -141,7 +136,7 @@ export const OffersTable = () => {
         variant="contained"
         onClick={handleClickOpenCreateModal}
       >
-        Adicionar Produto
+        Adicionar Oferta
       </Button>
 
       <TableContainer component={Paper}>
@@ -164,7 +159,7 @@ export const OffersTable = () => {
               </StyledTableCell>
               <StyledTableCell
                 sx={{
-                  maxWidth: '8rem',
+                  maxWidth: '5rem',
                 }}
               >
                 Descrição
@@ -254,31 +249,29 @@ export const OffersTable = () => {
       </TableContainer>
 
       <OfferModalForm
-        title="Adicionar Produto"
+        title="Adicionar Oferta"
         buttonText="Adicionar"
         open={openCreateModal}
         handleClose={handleCloseCreateModal}
         handleEvent={handleAddOffer}
         handleSubmit={handleSubmit}
-        handleChange={handleChange}
         register={register}
         errors={errors}
         products={products}
-        productId={productId}
+        setValue={setValue}
       />
 
       <OfferModalForm
-        title="Editar Produto"
+        title="Editar Oferta"
         buttonText="Editar"
         open={openEditModal}
         handleClose={handleCloseEditModal}
         handleEvent={handleEditOffer}
         handleSubmit={handleSubmit}
-        handleChange={handleChange}
         register={register}
         errors={errors}
         products={products}
-        productId={productId}
+        setValue={setValue}
       />
     </Container>
   )

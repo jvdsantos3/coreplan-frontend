@@ -12,7 +12,10 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  FormControl,
+  OutlinedInput,
 } from '@mui/material'
+import { IProduct } from '../../interfaces/IProduct'
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -23,6 +26,19 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }))
 
+interface OfferModalForm {
+  title: string
+  buttonText: string
+  open: boolean
+  handleClose: () => void
+  handleEvent: any
+  handleSubmit: any
+  register: any
+  errors: any
+  products: IProduct[]
+  setValue: any
+}
+
 export const OfferModalForm = ({
   title,
   buttonText,
@@ -30,12 +46,16 @@ export const OfferModalForm = ({
   handleClose,
   handleEvent,
   handleSubmit,
-  handleChange,
   register,
   errors,
   products,
-  productId,
-}) => {
+  setValue,
+}: OfferModalForm) => {
+  const handleInput = (e) => {
+    const value = e.target.value.replace(/\D/g, '') // Remove caracteres não numéricos
+    setValue('discount_percent', value)
+  }
+
   return (
     <BootstrapDialog
       onClose={handleClose}
@@ -99,32 +119,33 @@ export const OfferModalForm = ({
               errors.discount_percent ? errors.discount_percent.message : null
             }
             inputProps={{
-              pattern: '^[0-9]{1,2}$', // Aceita de 1 a 2 dígitos numéricos
-              maxLength: 2, // Define o comprimento máximo como 2
+              inputMode: 'numeric',
+              pattern: '[0-9]*',
+              maxLength: 2,
             }}
             {...register('discount_percent')}
+            onInput={handleInput}
           />
-          <InputLabel id="product_id_label">Alvo</InputLabel>
-          <Select
-            margin="normal"
-            fullWidth
-            value={productId}
-            label="Alvo"
-            onChange={handleChange}
-            id="product_id"
-            error={!!errors.product_id}
-            helperText={errors.product_id ? errors.product_id.message : null}
-            {...register('product_id')}
-          >
-            <MenuItem key={0} value={0}>
-              Geral
-            </MenuItem>
-            {products.map((product) => (
-              <MenuItem key={product.id} value={product.id}>
-                {product.name}
+          <FormControl fullWidth>
+            <InputLabel id="select-label">Alvo</InputLabel>
+            <Select
+              labelId="select-label"
+              input={<OutlinedInput label="Alvo" />}
+              id="select"
+              {...register('product_id')}
+              error={!!errors.product_id}
+            >
+              <MenuItem key={0} value={0}>
+                Geral
               </MenuItem>
-            ))}
-          </Select>
+              {products.map((product: IProduct) => (
+                <MenuItem key={product.id} value={product.id}>
+                  {product.name}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.product_id && <span>{errors.product_id.message}</span>}
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button
