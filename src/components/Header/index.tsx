@@ -120,6 +120,17 @@ export const Header = () => {
                   </Typography>
                 </MenuItem>
               )}
+              {Number(user?.role) === 1 && (
+                <MenuItem onClick={handleCloseNavMenu}>
+                  <Typography
+                    component={NavLink}
+                    to="/admin/pedidos"
+                    textAlign="center"
+                  >
+                    Pedidos
+                  </Typography>
+                </MenuItem>
+              )}
             </Menu>
           </Box>
 
@@ -151,14 +162,24 @@ export const Header = () => {
               Produtos
             </Button>
             {Number(user?.role) === 1 && (
-              <Button
-                component={NavLink}
-                to="/admin/ofertas"
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                Ofertas
-              </Button>
+              <>
+                <Button
+                  component={NavLink}
+                  to="/admin/ofertas"
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  Ofertas
+                </Button>
+                <Button
+                  component={NavLink}
+                  to="/admin/pedidos"
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                >
+                  Pedidos
+                </Button>
+              </>
             )}
           </Box>
 

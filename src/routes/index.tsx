@@ -19,14 +19,13 @@ import { useEffect } from 'react'
 import { OffersTable } from '../pages/Admin/OffersTable'
 import { useAuth } from '../hooks/useAuth'
 import { OfferProvider } from '../contexts/OfferContext'
+import { AdminOrders } from '../pages/Admin/Orders'
 
 const Admin = () => {
   const { user } = useAuth()
 
   const navigate = useNavigate()
   const location = useLocation()
-
-  console.log()
 
   useEffect(() => {
     if (Number(user?.role) === 2) {
@@ -85,6 +84,7 @@ export const Router = () => {
                 <Route path="/admin" element={<Admin />}>
                   <Route path="produtos" element={<ProductsTable />} />
                   <Route path="ofertas" element={<OffersTable />} />
+                  <Route path="pedidos" element={<AdminOrders />} />
                 </Route>
               </Route>
             </Route>
