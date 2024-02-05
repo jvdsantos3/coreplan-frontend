@@ -43,7 +43,7 @@ export function AuthProvider() {
         storeTokens(data.token)
         setIsLogged(true)
         setLoading(false)
-
+        toast.success('Bem vindo, ' + response.data.data.user.username)
         navigate('/home')
       })
       .catch((error) => {
@@ -58,11 +58,12 @@ export function AuthProvider() {
     await api
       .post('/users', data)
       .then(() => {
+        toast.success('Cadastro realizado com sucesso!')
         navigate('/')
         setLoading(false)
       })
-      .catch((error) => {
-        console.log(error)
+      .catch(() => {
+        toast.error('Erro ao realizar requisição')
         setLoading(false)
       })
   }
@@ -71,6 +72,7 @@ export function AuthProvider() {
     removeTokens()
     setIsLogged(false)
     setUser(null)
+    toast.error('Até logo :(')
     navigate('/')
   }
 

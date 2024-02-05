@@ -103,7 +103,7 @@ export const Header = () => {
               <MenuItem onClick={handleCloseNavMenu}>
                 <Typography
                   component={NavLink}
-                  to={Number(user?.role) === 1 ? '/admin' : '/home'}
+                  to={Number(user?.role) === 1 ? '/admin/produtos' : '/home'}
                   textAlign="center"
                 >
                   Produtos
@@ -111,7 +111,13 @@ export const Header = () => {
               </MenuItem>
               {Number(user?.role) === 1 && (
                 <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">Ofertas</Typography>
+                  <Typography
+                    component={NavLink}
+                    to="/admin/ofertas"
+                    textAlign="center"
+                  >
+                    Ofertas
+                  </Typography>
                 </MenuItem>
               )}
             </Menu>
@@ -138,7 +144,7 @@ export const Header = () => {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             <Button
               component={NavLink}
-              to={Number(user?.role) === 1 ? '/admin' : '/home'}
+              to={Number(user?.role) === 1 ? '/admin/produtos' : '/home'}
               onClick={handleCloseNavMenu}
               sx={{ my: 2, color: 'white', display: 'block' }}
             >
@@ -147,7 +153,7 @@ export const Header = () => {
             {Number(user?.role) === 1 && (
               <Button
                 component={NavLink}
-                to="/home"
+                to="/admin/ofertas"
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
               >

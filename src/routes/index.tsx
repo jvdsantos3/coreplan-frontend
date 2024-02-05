@@ -11,6 +11,7 @@ import { ProductsTable } from '../pages/Admin/ProductsTable'
 import { useEffect } from 'react'
 import { OffersTable } from '../pages/Admin/OffersTable'
 import { useAuth } from '../hooks/useAuth'
+import { OfferProvider } from '../contexts/OfferContext'
 
 const Admin = () => {
   const { user } = useAuth()
@@ -21,8 +22,6 @@ const Admin = () => {
     if (Number(user?.role) === 2) {
       return navigate('/home', { replace: true })
     }
-
-    navigate('/admin/produtos', { replace: true })
   }, [navigate, user])
 
   return <Outlet />
@@ -61,16 +60,18 @@ export const Router = () => {
 
         <Route path="/" element={<Private />}>
           <Route path="/" element={<ProductProvider />}>
-            <Route path="/" element={<DefaultLayout />}>
-              <Route path="/" element={<NormalUser />}>
-                <Route path="/home" element={<Home />} />
-                <Route path="/carrinho" element={<Cart />} />
-                <Route path="/pedidos" element={<Order />} />
-              </Route>
+            <Route path="/" element={<OfferProvider />}>
+              <Route path="/" element={<DefaultLayout />}>
+                <Route path="/" element={<NormalUser />}>
+                  <Route path="/home" element={<Home />} />
+                  <Route path="/carrinho" element={<Cart />} />
+                  <Route path="/pedidos" element={<Order />} />
+                </Route>
 
-              <Route path="/admin" element={<Admin />}>
-                <Route path="produtos" element={<ProductsTable />} />
-                <Route path="ofertas" element={<OffersTable />} />
+                <Route path="/admin" element={<Admin />}>
+                  <Route path="produtos" element={<ProductsTable />} />
+                  <Route path="ofertas" element={<OffersTable />} />
+                </Route>
               </Route>
             </Route>
           </Route>

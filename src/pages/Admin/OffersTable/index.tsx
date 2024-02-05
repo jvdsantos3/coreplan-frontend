@@ -12,9 +12,8 @@ import {
   styled,
   tableCellClasses,
 } from '@mui/material'
-import { useProduct } from '../../../hooks/useProducts'
+import { useOffer } from '../../../hooks/useOffer'
 import { Delete, Edit } from '@mui/icons-material'
-import { formatCurrency } from '../../../utils/currency'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,7 +36,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }))
 
 export const OffersTable = () => {
-  const { products } = useProduct()
+  const { offers } = useOffer()
 
   return (
     <Container
@@ -59,7 +58,7 @@ export const OffersTable = () => {
           color: 'inherit',
         }}
       >
-        Produtos
+        Ofertas
       </Typography>
 
       <TableContainer component={Paper}>
@@ -92,27 +91,20 @@ export const OffersTable = () => {
                   maxWidth: '2rem',
                 }}
               >
-                Preço Original
+                Desconto
               </StyledTableCell>
               <StyledTableCell
                 sx={{
                   maxWidth: '2rem',
                 }}
               >
-                Oferta
-              </StyledTableCell>
-              <StyledTableCell
-                sx={{
-                  maxWidth: '2rem',
-                }}
-              >
-                Preço com Desconto
+                Produto
               </StyledTableCell>
               <StyledTableCell></StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((row) => (
+            {offers.map((row) => (
               <StyledTableRow key={row.name}>
                 <StyledTableCell
                   component="th"
@@ -142,25 +134,14 @@ export const OffersTable = () => {
                     maxWidth: '2rem',
                   }}
                 >
-                  {formatCurrency(row.price)}
+                  {row.discount_percent + '%'}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
-                    maxWidth: '2rem',
+                    maxWidth: '3rem',
                   }}
                 >
-                  {row.offer?.discount_percent
-                    ? `${row.offer.discount_percent}%`
-                    : '-'}
-                </StyledTableCell>
-                <StyledTableCell
-                  sx={{
-                    maxWidth: '2rem',
-                  }}
-                >
-                  {row.offer?.value_with_dicount
-                    ? formatCurrency(row.offer.value_with_dicount)
-                    : '-'}
+                  {row.product_name ? row.product_name : 'Geral'}
                 </StyledTableCell>
                 <StyledTableCell
                   sx={{
