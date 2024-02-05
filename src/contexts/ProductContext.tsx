@@ -23,6 +23,7 @@ interface ProductContextType {
   changeCartItemQuantity: (itemId: number, quantity: number) => void
   finalizeOrder: () => void
   addProduct: (data: ProductInputs) => void
+  deleteProduct: (product: IProduct) => void
 }
 
 export const ProductContext = createContext({} as ProductContextType)
@@ -129,6 +130,19 @@ export function ProductProvider() {
       .catch((error) => console.log(error))
   }
 
+  const deleteProduct = async (product: IProduct) => {
+    console.log(product)
+    await api
+      .delete(`/products/${product.id}`)
+      .then(async () => {
+        await getProducts()
+        toast.success(`Produto ${product.name} excluido com sucesso.`)
+      })
+      .catch((error) => {
+        console.log(error)
+      })
+  }
+
   useEffect(() => {
     getProducts()
     getOrders()
@@ -152,6 +166,7 @@ export function ProductProvider() {
         changeCartItemQuantity,
         finalizeOrder,
         addProduct,
+        deleteProduct,
       }}
     >
       <Outlet />
