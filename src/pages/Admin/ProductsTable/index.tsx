@@ -56,7 +56,7 @@ export const ProductsTable = () => {
   const [openEditModal, setOpenEditModal] = useState(false)
   const [editProductId, setEditProductId] = useState(0)
 
-  const { products, addProduct, editProduct } = useProduct()
+  const { products, addProduct, deleteProduct, editProduct } = useProduct()
 
   const {
     register,
@@ -237,13 +237,14 @@ export const ProductsTable = () => {
                   }}
                 >
                   <IconButton
-                    aria-label="delete"
+                    aria-label="edit"
                     onClick={() => handleClickOpenEditModal(row)}
                   >
                     <Edit />
                   </IconButton>
                   <IconButton
                     aria-label="delete"
+                    onClick={() => deleteProduct(row)}
                     sx={{
                       color: ({ palette }) => palette.error.main,
                     }}
