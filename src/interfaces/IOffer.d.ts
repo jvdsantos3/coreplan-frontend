@@ -5,4 +5,5 @@ export interface IOffer {
   value_with_discount: number
   description?: string
   product_name?: string
+  product_id?: number
 }

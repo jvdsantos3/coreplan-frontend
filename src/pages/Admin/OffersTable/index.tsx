@@ -1,4 +1,5 @@
 import {
+  Button,
   Container,
   IconButton,
   Paper,
@@ -13,7 +14,15 @@ import {
   tableCellClasses,
 } from '@mui/material'
 import { useOffer } from '../../../hooks/useOffer'
-import { Delete, Edit } from '@mui/icons-material'
+import { useProduct } from '../../../hooks/useProducts'
+import { AddCircleOutline, Delete, Edit } from '@mui/icons-material'
+import { OfferModalForm } from '../../../components/OfferModalForm'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { IOffer } from '../../../interfaces/IOffer'
+import { SelectChangeEvent } from '@mui/material/Select'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,8 +44,74 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }))
 
+const formSchema = z.object({
+  name: z.string().min(1, 'O campo Usuário é obrigatório.'),
+  description: z.string().min(1, 'O campo Senha é obrigatório.'),
+  discount_percent: z.coerce.number(),
+  product_id: z.coerce.number(),
+})
+
+export type FormInputs = z.infer<typeof formSchema>
+
 export const OffersTable = () => {
-  const { offers, deleteOffer } = useOffer()
+  const [openCreateModal, setOpenCreateModal] = useState(false)
+  const [openEditModal, setOpenEditModal] = useState(false)
+  const [editOfferId, setEditOfferId] = useState(0)
+  const [productId, setProductId] = useState(0)
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setProductId(Number(event.target.value))
+  }
+
+  const { offers, addOffer, deleteOffer, editOffer } = useOffer()
+  const { products } = useProduct()
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<FormInputs>({
+    resolver: zodResolver(formSchema),
+  })
+
+  const handleAddOffer = async (data: FormInputs) => {
+    await addOffer(data)
+    handleCloseCreateModal()
+  }
+
+  const handleEditOffer = async (data: FormInputs) => {
+    await editOffer(editOfferId, data)
+
+    handleCloseEditModal()
+  }
+
+  const handleClickOpenCreateModal = () => {
+    reset()
+    setOpenCreateModal(true)
+  }
+
+  const handleClickOpenEditModal = async (data: IOffer) => {
+    setValue('name', data.name)
+    setValue('description', data.description)
+    setValue('discount_percent', data.discount_percent)
+
+    const idProductEdit = data.product_id ? data.product_id : 0
+    await setProductId(idProductEdit)
+
+    setEditOfferId(data.id)
+
+    setOpenEditModal(true)
+  }
+
+  const handleCloseCreateModal = () => {
+    setOpenCreateModal(false)
+  }
+
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false)
+  }
 
   return (
     <Container
@@ -60,6 +135,14 @@ export const OffersTable = () => {
       >
         Ofertas
       </Typography>
+
+      <Button
+        startIcon={<AddCircleOutline />}
+        variant="contained"
+        onClick={handleClickOpenCreateModal}
+      >
+        Adicionar Produto
+      </Button>
 
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
@@ -105,7 +188,7 @@ export const OffersTable = () => {
           </TableHead>
           <TableBody>
             {offers.map((row) => (
-              <StyledTableRow key={row.name}>
+              <StyledTableRow key={row.id}>
                 <StyledTableCell
                   component="th"
                   scope="row"
@@ -148,7 +231,10 @@ export const OffersTable = () => {
                     maxWidth: 4,
                   }}
                 >
-                  <IconButton aria-label="delete">
+                  <IconButton
+                    aria-label="edit"
+                    onClick={() => handleClickOpenEditModal(row)}
+                  >
                     <Edit />
                   </IconButton>
                   <IconButton
@@ -166,6 +252,34 @@ export const OffersTable = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <OfferModalForm
+        title="Adicionar Produto"
+        buttonText="Adicionar"
+        open={openCreateModal}
+        handleClose={handleCloseCreateModal}
+        handleEvent={handleAddOffer}
+        handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        register={register}
+        errors={errors}
+        products={products}
+        productId={productId}
+      />
+
+      <OfferModalForm
+        title="Editar Produto"
+        buttonText="Editar"
+        open={openEditModal}
+        handleClose={handleCloseEditModal}
+        handleEvent={handleEditOffer}
+        handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        register={register}
+        errors={errors}
+        products={products}
+        productId={productId}
+      />
     </Container>
   )
 }
